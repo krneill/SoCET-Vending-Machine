@@ -18,6 +18,7 @@ module fsm_example #(
     localparam NOCOIN = 2'b00;
     localparam NICKEL = 2'b01;
     localparam DIME   = 2'b10;
+    localparam VEND   = 3'b111; // Special display value for vending
 
     
     // State encoding (0 to 6 fits perfectly in 3 bits)
@@ -55,40 +56,51 @@ module fsm_example #(
 
         case (current_state)
             S0: begin
+                display = 3'd0; 
                 if (coin_val == NICKEL)      next_state = S5;
                 else if (coin_val == DIME)   next_state = S10;
+                
             end
             
             S5: begin
+                display = 3'd1;
                 if (coin_val == NICKEL)      next_state = S10;
                 else if (coin_val == DIME)   next_state = S15;
+                 
             end
             
             S10: begin
+                display = 3'd2;
                 if (coin_val == NICKEL)      next_state = S15;
                 else if (coin_val == DIME)   next_state = S20;
+                
             end
             
             S15: begin
+                display = 3'd3;
                 if (coin_val == NICKEL)      next_state = S20;
                 else if (coin_val == DIME)   next_state = S25;
+                
             end
             
             S20: begin
+                display = 3'd4;
                 if (coin_val == NICKEL)      next_state = S25;
                 else if (coin_val == DIME)   next_state = S30;
+                
             end
             
             S25: begin
                 display = VEND;
                 //TODO: implement a "waiting" mechanism that shows the display for 3 seconds before resetting to S0
                 next_state = S0; // Move to bal = 0 after vending
+         
             end
             
             S30: begin
                 display = VEND;
                 //TODO: implement a "waiting" mechanism that shows the display for 3 seconds before resetting to S5
-                next_state = S5; 
+                next_state = S5;
             end
             
             default: next_state = S0;
