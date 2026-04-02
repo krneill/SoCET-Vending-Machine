@@ -1,4 +1,4 @@
-module fsm_example #(
+module vending_machine(
     parameter CLK_FREQ = 50_000_000 // 50MHz clock frequency
 )(
     input  logic clk,
