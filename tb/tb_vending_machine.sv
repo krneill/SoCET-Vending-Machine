@@ -65,6 +65,9 @@ module tb_vending_machine;
         insert_coin(NICKEL); //Insert a nickel
         check_display(3'd1); // Expect display to show 1 (5 cents)
 
+        //Todo: Add more test cases here for inserting dimes, multiple coins, and vending.
+        // Possible randomized values entered?
+
         $finish;
     end
 
