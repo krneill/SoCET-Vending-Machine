@@ -19,7 +19,7 @@ module vending_machine(
     localparam NOCOIN = 2'b00;
     localparam NICKEL = 2'b01;
     localparam DIME   = 2'b10;
-    localparam VEND   = 3'b111 * 5; // Special display value for vending
+    localparam VEND   = 3'b111; // Special display value for vending
 
     
     // State encoding (0 to 6 fits perfectly in 3 bits)

@@ -41,9 +41,8 @@ module tb_vending_machine;
         end
     endtask
 
-    task check_display(input logic [2:0] expected_value);
+    task check_display(input logic [2:0] expected);
         begin
-            expected = expected_value / 5;  //Converts expected value to display value(value is the input value divided by 5)
             @(posedge clk); // Wait for a clock edge to update the display
             if (display !== expected) begin
                 $display("Test Failed: Expected display = %d, Got = %d", expected, display);
