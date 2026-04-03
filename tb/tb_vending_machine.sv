@@ -43,7 +43,6 @@ module tb_vending_machine;
 
     task check_display(input logic [2:0] expected);
         begin
-            @(posedge clk); // Wait for a clock edge to update the display
             if (display !== expected) begin
                 $display("Test Failed: Expected display = %d, Got = %d", expected, display);
             end else begin
@@ -82,6 +81,7 @@ module tb_vending_machine;
         check_display(3'd7);
         
         // Test #4, check state resets after vend
+        @(posedge clk); // Wait for next clock edge to see if it resets
         check_display(3'd0); // Expect to go back to 0 automatically
 
         // Test #5, randomize inputs (simulated random sequence)
