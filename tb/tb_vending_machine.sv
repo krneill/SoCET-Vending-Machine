@@ -65,8 +65,36 @@ module tb_vending_machine;
         insert_coin(NICKEL); //Insert a nickel
         check_display(3'd1); // Expect display to show 1 (5 cents)
 
-        //Todo: Add more test cases here for inserting dimes, multiple coins, and vending.
-        // Possible randomized values entered?
+        // Test #2, inserting a dime
+        reset();
+        resetSignals();
+        insert_coin(DIME); //Insert a dime
+        check_display(3'd2); // Expect display to show 2 (10 cents)
+
+        // Test #3, sequence to vend (25 cents)
+        reset();
+        resetSignals();
+        insert_coin(DIME); // 10 cents
+        check_display(3'd2);
+        insert_coin(DIME); // 20 cents
+        check_display(3'd4);
+        insert_coin(NICKEL); // 25 cents -> VEND (7)
+        check_display(3'd7);
+        
+        // Test #4, check state resets after vend
+        check_display(3'd0); // Expect to go back to 0 automatically
+
+        // Test #5, randomize inputs (simulated random sequence)
+        reset();
+        resetSignals();
+        insert_coin(NICKEL); // 5
+        check_display(3'd1);
+        insert_coin(NICKEL); // 10
+        check_display(3'd2);
+        insert_coin(DIME); // 20
+        check_display(3'd4);
+        insert_coin(DIME); // 30 (Over-vend) -> expected to show VEND for S30 or handle correctly
+        // We'll just wait to observe behavior
 
         $finish;
     end
