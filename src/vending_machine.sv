@@ -1,13 +1,14 @@
-module fsm_example #(
-    parameter CLK_FREQ = 50_000_000 // 50MHz clock frequency
-)(
+module vending_machine(
+    //Commented out because doesnt build with this
+/*    parameter CLK_FREQ = 50_000_000 // 50MHz clock frequency
+)(  */
     input  logic clk,
     input  logic nRST,
     input  logic [1:0] coin_val, // Fixed: dimension comes before the variable name
     output logic [2:0] display   // 3 bits is perfect for representing 0 to 6
 );
 
-    localparam WAIT_CYCLES = 3 * CLK_FREQ; // 3 seconds worth of clock cycles
+    //localparam WAIT_CYCLES = 3 * CLK_FREQ; // 3 seconds worth of clock cycles
 
     // coin constants
     // coin values:
@@ -53,6 +54,7 @@ module fsm_example #(
     always_comb begin
         // Default assignments to prevent latches
         next_state = current_state; 
+        display = 3'b000; // Default display is 0
 
         case (current_state)
             S0: begin
