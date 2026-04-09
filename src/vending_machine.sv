@@ -1,14 +1,13 @@
-module vending_machine(
-    //Commented out because doesnt build with this
-/*    parameter CLK_FREQ = 50_000_000 // 50MHz clock frequency
-)(  */
+module vending_machine #(
+    parameter CLK_FREQ = 50_000_000 // ASSIGN THIS CLOCK FREQUNECY ACCORDING TO FPGA USED
+)(
     input  logic clk,
     input  logic nRST,
     input  logic [1:0] coin_val, 
     output logic [2:0] display   
 );
 
-    //localparam WAIT_CYCLES = 3 * CLK_FREQ; // 3 seconds worth of clock cycles
+    localparam WAIT_CYCLES = 2 * CLK_FREQ; // 2 seconds worth of clock cycles
 
     // coin constants
     // coin values:
@@ -74,7 +73,8 @@ module vending_machine(
     always_comb begin
         // Default assignments to prevent latches
         next_state = current_state; 
-        display = 3'b000; // Default display is 0
+        display = 3'd0;     // Provide a safe default for display
+        timer_en = 1'b0;    // Timer is disabled by default
 
         case (current_state)
             S0: begin
