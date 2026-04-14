@@ -6,7 +6,6 @@ module vending_machine (
     output logic [2:0] display   
 );
 
-    localparam WAIT_CYCLES = 2; // 2 seconds worth of clock cycles
 
     // coin constants
     // coin values:
