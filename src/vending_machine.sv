@@ -1,13 +1,12 @@
-module vending_machine #(
-    parameter CLK_FREQ = 50_000_000 // ASSIGN THIS CLOCK FREQUNECY ACCORDING TO FPGA USED
-)(
+module vending_machine (
     input  logic clk,
     input  logic nRST,
     input  logic [1:0] coin_val, 
+    input logic vend_reset,
     output logic [2:0] display   
 );
 
-    localparam WAIT_CYCLES = 2 * CLK_FREQ; // 2 seconds worth of clock cycles
+    localparam WAIT_CYCLES = 2; // 2 seconds worth of clock cycles
 
     // coin constants
     // coin values:
@@ -34,39 +33,15 @@ module vending_machine #(
     state_t current_state, next_state;
 
     // ---------------------------------------------------------
-    // Timer Variables
-    // ---------------------------------------------------------
-    localparam COUNT_WIDTH = $clog2(WAIT_CYCLES); // Automatically size the timer
-    logic [COUNT_WIDTH-1:0] timer;
-    logic timer_en;
-    logic timer_done;
-
-    // ---------------------------------------------------------
     // 1. Sequential Logic (State Memory & Timer)
     // ---------------------------------------------------------
     always_ff @(posedge clk or negedge nRST) begin
         if (!nRST) begin
             current_state <= S0; // Reset state
-            timer <= '0;         // Reset timer
         end else begin
             current_state <= next_state; // Advance to next state
-            
-            // Timer logic
-            if (timer_en) begin
-                if (timer_done) begin
-                    timer <= '0; // Reset timer when limit is reached
-                end else begin
-                    timer <= timer + 1'b1; // Increment timer
-                end
-            end else begin
-                timer <= '0; // Keep timer at 0 when not enabled
-            end
         end
     end
-
-    // The timer is done when it reaches (WAIT_CYCLES - 1)
-    assign timer_done = (timer == (WAIT_CYCLES - 1));
-
     // ---------------------------------------------------------
     // 2. Combinational Logic (Next State & Outputs)
     // ---------------------------------------------------------
@@ -74,7 +49,6 @@ module vending_machine #(
         // Default assignments to prevent latches
         next_state = current_state; 
         display = 3'd0;     // Provide a safe default for display
-        timer_en = 1'b0;    // Timer is disabled by default
 
         case (current_state)
             S0: begin
@@ -108,21 +82,13 @@ module vending_machine #(
             end
             
             S25: begin
-                display = VEND;
-                timer_en = 1'b1;         // Turn on the timer
-                
-                if (timer_done) begin
-                    next_state = S0;     // Move to bal = 0 after 3 seconds
-                end
+                display = VEND;      
+                if(vend_reset) next_state = S0; // Reset after vend
             end
             
             S30: begin
                 display = VEND;
-                timer_en = 1'b1;         // Turn on the timer
-                
-                if (timer_done) begin
-                    next_state = S5;     // Reset to S5 after 3 seconds
-                end
+                if(vend_reset) next_state = S5; // Reset after vend
             end
             
             default: next_state = S0;
