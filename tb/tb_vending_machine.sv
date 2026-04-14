@@ -24,13 +24,13 @@ module tb_vending_machine;
             rst_n = 0;
             @(posedge clk); // Wait for a clock edge
             rst_n = 1;
-        end
     endtask
 
     task resetSignals();
         begin
             coin_val = NOCOIN;
             display = 3'b000;
+            vend_reset = 0;
         end
     endtask
 
@@ -49,6 +49,14 @@ module tb_vending_machine;
             end else begin
                 $display("Test Passed: Display = %d", display);
             end
+        end
+    endtask
+
+    task resetVend();
+        begin
+            vend_reset = 1;
+            @(posedge clk); // Wait for a clock edge to register the vend reset
+            vend_reset = 0; // Clear the vend reset after registering
         end
     endtask
 
@@ -80,7 +88,7 @@ module tb_vending_machine;
         check_display(3'd4);
         insert_coin(NICKEL); // 25 cents -> VEND (7)
         check_display(3'd7);
-        vend_reset = 1'b1; // Simulate vend reset
+        resetVend();
         @(posedge clk); // Wait for next clock edge
         vend_reset = 1'b0; // Clear vend reset
         check_display(3'd0); // Expect to go back to 0 automatically
@@ -96,9 +104,7 @@ module tb_vending_machine;
         check_display(3'd4);
         insert_coin(DIME);
         check_display(3'd7); // Expect VEND
-        vend_reset = 1'b1; // Simulate vend reset
-        @(posedge clk); // Wait for next clock edge
-        vend_reset = 1'b0; // Clear vend reset
+        resetVend();
         check_display(3'd1); // Expect to go back to 5 as 30 was inserted
         
          // 30 (Over-vend) -> expected to show VEND for S30 or handle correctly
