@@ -1,15 +1,14 @@
 module tb_vending_machine;
-
     localparam NOCOIN = 2'b00;
     localparam NICKEL = 2'b01;
     localparam DIME   = 2'b10;
-
+    localparam CLK_FREQ = 50_000;
     logic clk = 0;
     logic rst_n = 1;
     logic [1:0] coin_val;
     logic [2:0] display;
 
-    vending_machine DUT(
+    vending_machine #(CLK_FREQ) DUT (
         .clk(clk),
         .nRST(rst_n),
         .coin_val(coin_val),
@@ -50,6 +49,16 @@ module tb_vending_machine;
             end
         end
     endtask
+    
+    task waitTime(int seconds);
+        begin
+            int i;
+            for(i = 0; i < seconds * CLK_FREQ - 1; i++) begin
+                @(posedge clk);
+                //$display("waiting... %d", i); 
+            end
+        end
+    endtask
 
     initial begin
         
@@ -79,6 +88,8 @@ module tb_vending_machine;
         check_display(3'd4);
         insert_coin(NICKEL); // 25 cents -> VEND (7)
         check_display(3'd7);
+        waitTime(2); // Wait for 2 seconds to observe vend state
+        check_display(3'd7);
         
         // Test #4, check state resets after vend
         @(posedge clk); // Wait for next clock edge to see if it resets
@@ -93,7 +104,10 @@ module tb_vending_machine;
         check_display(3'd2);
         insert_coin(DIME); // 20
         check_display(3'd4);
-        insert_coin(DIME); // 30 (Over-vend) -> expected to show VEND for S30 or handle correctly
+        insert_coin(DIME);
+        waitTime(2); 
+        check_display(3'd7); // Expect VEND
+         // 30 (Over-vend) -> expected to show VEND for S30 or handle correctly
         // We'll just wait to observe behavior
 
         $finish;
