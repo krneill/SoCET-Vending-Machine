@@ -24,6 +24,7 @@ module tb_vending_machine;
             rst_n = 0;
             @(posedge clk); // Wait for a clock edge
             rst_n = 1;
+        end
     endtask
 
     task resetSignals();

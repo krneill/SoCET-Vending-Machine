@@ -5,8 +5,6 @@ module vending_machine (
     input logic vend_reset,
     output logic [2:0] display   
 );
-
-
     // coin constants
     // coin values:
     // 00 = no coin
